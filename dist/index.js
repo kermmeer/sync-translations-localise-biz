@@ -1631,7 +1631,14 @@ if(!filePrefix || filePrefix === '') {
     filePrefix = '';
 }
 
-action({ apiKey, destination, format, failIfNotChanged, noComments, fallbackLanguage, filePrefix })
+var fileNameOverrides = core.getInput("fileNameOverrides");
+if(!fileNameOverrides || fileNameOverrides === ''){
+    fileNameOverrides = {};
+}else{
+    fileNameOverrides = JSON.parse(fileNameOverrides);
+}
+
+action({ apiKey, destination, format, failIfNotChanged, noComments, fallbackLanguage, filePrefix, fileNameOverrides })
     .then(function(count) {
         core.setOutput('count', count.toString());
     })
@@ -26742,7 +26749,7 @@ module.exports = async function(options) {
         query["no-comments"] = "true";
     if(options.fallbackLanguage != null)
         query["fallback"] = options.fallbackLanguage;
-        
+
     let queryString = Object.keys(query).map(key => {
       return `${encodeURIComponent(key)}=${encodeURIComponent(query[key])}`;
     }).join('&');
@@ -26751,8 +26758,12 @@ module.exports = async function(options) {
 
     for(let locale of locales) {
         let fileName = locale.code + '.' + options.format;
-        let filePath = path.join(options.destination, options.filePrefix + fileName);
-        let lastModifiedFilePath = path.join(options.destination, '.' + options.filePrefix + fileName + '.txt');
+        let savedFileName = options.fileNameOverrides[locale.code];
+        if(!savedFileName || savedFileName === ''){
+            savedFileName = options.filePrefix + fileName;
+        }
+        let filePath = path.join(options.destination, savedFileName);
+        let lastModifiedFilePath = path.join(options.destination, '.' + savedFileName + '.txt');
 
         let mtime = 0;
 

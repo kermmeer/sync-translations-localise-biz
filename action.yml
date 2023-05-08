@@ -28,6 +28,10 @@ inputs:
     description: 'File prefix to use'
     required: false
     default: ''
+  fileNameOverrides:
+    description: 'Json object for each locale that needs a custom filename. Prefix is ignored here.'
+    required: false
+    default: '{}'
 outputs:
   count:
     description: 'Count of updated translation files'

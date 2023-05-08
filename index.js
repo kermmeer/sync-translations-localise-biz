@@ -33,7 +33,14 @@ if(!filePrefix || filePrefix === '') {
     filePrefix = '';
 }
 
-action({ apiKey, destination, format, failIfNotChanged, noComments, fallbackLanguage, filePrefix })
+var fileNameOverrides = core.getInput("fileNameOverrides");
+if(!fileNameOverrides || fileNameOverrides === ''){
+    fileNameOverrides = {};
+}else{
+    fileNameOverrides = JSON.parse(fileNameOverrides);
+}
+
+action({ apiKey, destination, format, failIfNotChanged, noComments, fallbackLanguage, filePrefix, fileNameOverrides })
     .then(function(count) {
         core.setOutput('count', count.toString());
     })
