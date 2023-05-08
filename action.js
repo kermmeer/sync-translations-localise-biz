@@ -19,10 +19,22 @@ module.exports = async function(options) {
 
     var updatedFiles = [];
 
+    let query = {};
+    if(options.noComments)
+        query["no-comments"] = "true";
+    if(options.fallbackLanguage != null)
+        query["fallback"] = options.fallbackLanguage;
+        
+    let queryString = Object.keys(query).map(key => {
+      return `${encodeURIComponent(key)}=${encodeURIComponent(query[key])}`;
+    }).join('&');
+    if(queryString && queryString.length > 0)
+        queryString = "?" + queryString
+
     for(let locale of locales) {
         let fileName = locale.code + '.' + options.format;
-        let filePath = path.join(options.destination, fileName);
-        let lastModifiedFilePath = path.join(options.destination, '.' + fileName + '.txt');
+        let filePath = path.join(options.destination, options.filePrefix + fileName);
+        let lastModifiedFilePath = path.join(options.destination, '.' + options.filePrefix + fileName + '.txt');
 
         let mtime = 0;
 
@@ -40,7 +52,7 @@ module.exports = async function(options) {
         console.log(mtime ? 'Updating' : 'Downloading', 'locale', locale.code, "(" + locale.name + ")", 'to', filePath);
 
         let status = await new Promise(function(resolve, reject) {
-            let req = request('https://localise.biz/api/export/locale/' + fileName, {
+            let req = request('https://localise.biz/api/export/locale/' + fileName + queryString, {
                 auth: {
                     user: options.apiKey,
                     pass: ''

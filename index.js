@@ -16,7 +16,24 @@ if(!failIfNotChanged || failIfNotChanged === '') {
     failIfNotChanged = !!failIfNotChanged;
 }
 
-action({ apiKey, destination, format, failIfNotChanged })
+var noComments = core.getInput('noComments');
+if(!noComments || noComments === '') {
+    noComments = false;
+} else {
+    noComments = !!noComments;
+}
+
+var fallbackLanguage = core.getInput('fallbackLanguage');
+if(!fallbackLanguage || fallbackLanguage === '') {
+    fallbackLanguage = null;
+}
+
+var filePrefix = core.getInput('filePrefix');
+if(!filePrefix || filePrefix === '') {
+    filePrefix = '';
+}
+
+action({ apiKey, destination, format, failIfNotChanged, noComments, fallbackLanguage, filePrefix })
     .then(function(count) {
         core.setOutput('count', count.toString());
     })

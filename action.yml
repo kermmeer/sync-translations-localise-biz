@@ -16,6 +16,18 @@ inputs:
     description: 'Fail the action when there is no update made to the language files'
     required: false
     default: true
+  noComments:
+    description: 'Don`t export comments to the translation files'
+    required: false
+    default: false
+  fallbackLanguage:
+    description: 'Fallback language to use for exported translation files'
+    required: false
+    default: null
+  filePrefix:
+    description: 'File prefix to use'
+    required: false
+    default: ''
 outputs:
   count:
     description: 'Count of updated translation files'
